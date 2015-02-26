@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>Geo409 Task H Starter</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: Lato, sans-serif;
+            color: #0D0000;
+        }
+        header {
+            padding: 6px 10%;
+        }
+        h1 {
+            display: inline-block;
+            margin-right: 20px;
+            color: #001323;
+        }
+        h2 {
+            display: inline-block;
+            color: #001323;
+        }
+        #map {
+            width: 80%;
+            height: 540px;
+            margin: 10px auto;
+        }
+        footer {
+            padding: 6px 10%;
+            width: 80%;
+        }
+        p {
+            font-size: 1em;
+            color: #001323;
+        }
+        /* Additional style rules go here! */
+        
+        .blue {
+            color: #165bb6;
+        }
+        .red {
+            color: #cc0000;
+        }
+        .purple {
+            color: #b6165b; 
+        }
+        
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Map Title</h1>
+        <h2>Map Subtitle</h2>
+    </header>
+
+    <div id='map'></div>
+
+    <footer>
+        <p>Map authored by YOUR NAME</p>
+        <p>Additional information about the data and map goes here.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis urna magna, maximus nec laoreet sit amet, dictum ultricies nibh. Ut id auctor lacus. Nam a dolor et justo luctus luctus. Duis a elit eget risus dictum vehicula id eu elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed sed enim nisl. Vestibulum commodo imperdiet lacus, sed facilisis erat placerat sit amet. Nulla consequat malesuada neque eget aliquet. Integer non convallis nisl, gravida ultrices ex. Fusce nec vestibulum elit. Sed elementum lectus ipsum, vulputate elementum ex laoreet a. Aenean eu ex varius, varius felis vitae, efficitur nulla. Quisque pretium laoreet ante, in sodales dui vehicula at. Mauris eu sem sapien.
+        </p>
+    </footer>
+
+    <script>
+
+        var map = L.map('map', {
+            center: [-22.9068, -43.1729],
+            zoom: 8,
+        });
+       
+        var tiles = L.tileLayer('http://a{s}.acetate.geoiq.com/tiles/acetate-hillshading/{z}/{x}/{y}.png', {
+            attribution: '&copy;2012 Esri & Stamen, Data from OSM and Natural Earth',
+            subdomains: '0123',
+            minZoom: 4,
+            maxZoom: 12
+        });
+        map.addLayer(tiles);
+        
+        var tourBrazil = {
+             "type": "FeatureCollection",
+            "features": [
+        
+                {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "marker-color": "#7e7e7e",
+        "marker-size": "medium",
+        "marker-symbol": "",
+        "Name": "Cristo the Redeemer",
+        "Description": "Best Monument",
+        "Radius": 100
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -43.211631774902344,
+          -22.951280260254226
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "marker-color": "#7e7e7e",
+        "marker-size": "medium",
+        "marker-symbol": "",
+        "Name": "Sugarloaf Mtn",
+        "Description": "Best View",
+        "Radius": 100
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -43.16880226135254,
+          -22.957049769147975
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "marker-color": "#7e7e7e",
+        "marker-size": "medium",
+        "marker-symbol": "",
+        "Name": "Rocinha",
+        "Description": "Largest Favela",
+        "Radius": 100
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -43.24896812438965,
+          -22.98842210396834
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stroke": "#555555",
+        "stroke-width": 2,
+        "stroke-opacity": 1,
+        "fill": "#555555",
+        "fill-opacity": 0.5,
+        "Name": "Ipanema",
+        "Description": "Best Beach"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -43.213863372802734,
+              -22.980599457737615
+            ],
+            [
+              -43.2147216796875,
+              -22.98692082315402
+            ],
+            [
+              -43.191890716552734,
+              -22.98850111828578
+            ],
+            [
+              -43.19704055786133,
+              -22.980757495478052
+            ],
+            [
+              -43.213863372802734,
+              -22.980599457737615
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+},
+                {
+                "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -43.20270538330078,
+            -22.98399722841694
+          ],
+          [
+            -43.169403076171875,
+            -22.955548139835695
+          ],
+          [
+            -43.21094512939453,
+            -22.9511221880545
+          ],
+          [
+            -43.2480239868164,
+            -22.98810604623632
+          ],
+          [
+            -43.216094970703125,
+            -22.985261493365908
+          ]
+        ]
+      }
+    }
+  ]
+}
+            
+            
+            
+            
+             var brazilPoints = {
+            color: "blue"
+        };
+        
+            var brazilPoly = {
+            color: "green"
+        }; 
+        
+        var brazilLine = {
+            color: "green"
+        };
+        
+        
+        
+        
+        var brazilFeatures = L.geoJson(tourBrazil, {pointToLayer: function(feature, latlng) {
+            
+            return L.circle(latlng, feature.properties.radius);
+        },
+            
+            style: function(feature) {
+                return { dashArray: "5, 10",
+                        weight: 10
+                       }
+            },
+                                                    
+         onEachFeature:  function(feature, layer) {
+             if(feature.geometry.type == "Point") {
+                 layer.setStyle(brazilPoints);
+                 layer.bindPopup("This is a " +feature.geometry.type+ "Feature");
+             }
+             if(feature.geometry.type == "LineString") {
+                 layer.setStyle(brazilLine);
+                 layer.bindPopup("This is a " +feature.geometry.type+ "Feature");
+             }
+             if(feature.geometry.type == "Polygon"){
+                 layer.setStyle(brazilPoly);
+                 layer.bindPopup("This is a "+feature.geometry.type+ "Feature");
+           
+             }}}).addTo(map);
+                               
+        
+        // Begin writing/modifying code for Task H here
+        
+
+          
+    </script>
+    
+</body>
+
+</html>
