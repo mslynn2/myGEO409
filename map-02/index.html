@@ -82,56 +82,33 @@
 });
         map.addLayer(Esri_WorldImagery);
         
+        plants.features.sort(function(a,b) {
+			return b.properties.capacity - a.properties.capacity;
+		});
         
-        plants.features.sort(function(a, b) {
-            return b.properties.capacity - a.properties.capacity;
-        });
-        console.log(plants);
+        
+        var coalPlants = L.layerGroup();
+        
         L.geoJson(plants, {
-            pointToLayer: function(feature, latlng) {
-                return L.circleMarker(latlng, {
-                    color: 'green',
+            pointToLayer : function ( feature, latlng) {
+                return L.circleMarker( latlng, {
+                    radius: getRadius(feature.properties.source["Coal"]),
+                    color: "orange",
                     weight: 1.5,
-                    fillColor: 'blue',
-                    fillOpacity: 0.55,
-                    radius: getRadius(feature.properties.source["Coal"])
+                    fillcolor: "orange",
+                    opacity: 10
                 });
-                
-                
-            function getRadius(area) {
-                var radius = Math.sqrt(area/Math.PI);
-                return radius * .6;
-        }
-            },
-//        coordsToLatLng: function(coords) {
-//            return L.latLng(coords);
-//        },    
-        filter: function(feature, layer) {
-            var coord = feature.geometry.coordinates;
-            
-            var cityLou = L.latLng(38.2500, -85.7667);
-//            var distance = coord.distanceTo(knox);
-//            var distance = getDistance(coord, knox);
-            if(feature.properties.source["Coal"] &&
-               feature.properties.source["Coal"] < 500) {
-                return feature;
             }
-        }
-        }).addTo(map);
+            
+        }).addTo(coalPlants);
+        coalPlants.addTo(map);
         
-//        var powerPlants = L.layerGroup();
-//        L.geoJson(plants, {
-//            pointToLayer : function ( feature, latlng) {
-//                return L.circleMarker( latlng, {
-//                    radius: feature.properties.capacity,
-//                    color: "orange",
-//                    weight: 1.5,
-//                    fillcolor: "red",
-//                    opacity: 1
-//                });
-//            }
-//        }).addTo(powerPlants);
-//        powerPlants.addTo(map);
+        function getRadius(rad) {
+            var radius = Math.sqrt(rad/Math.PI);
+            return radius * 0.55;   
+        } 
+        
+//       
  
         
     </script>
