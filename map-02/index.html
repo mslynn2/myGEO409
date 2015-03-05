@@ -51,19 +51,49 @@
 
 <body>
     <header>
-        <!-- add HTML here-->
+        <h1>Main Title</h1>
+        <h2>Subtitle</h2>
     </header>
 
-        <!-- add HTML here-->
+        <div id='map'></div>
 
     <footer>
-        <!-- add HTML here-->
+        <p>Map authored by Micah Lynn</p>
+        <p>Power Plants</p>
+        <p>yep
+        </p>
     </footer>
+        <script src="power-plants-assignment.js"></script> 
         
-        <!-- load external JS file here-->
+      
     <script>
 
-          // add JavaScript here
+          var options = {
+        center: [38, -85],
+        zoom: 4
+        }
+    
+    var map = L.map('map', options);
+       
+    var Esri_WorldImagery = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+});
+        map.addLayer(Esri_WorldImagery);
+        
+        var powerPlants = L.layerGroup();
+        L.geoJson(plants, {
+            pointToLayer : function ( feature, latlng) {
+                return L.circleMarker( latlng, {
+                    radius: feature.properties.capacity*0.0065,
+                    color: "orange",
+                    weight: 1.5,
+                    fillcolor: "red",
+                    opacity: 1
+                });
+            }
+        }).addTo(powerPlants);
+        powerPlants.addTo(map);
+ 
         
     </script>
     
