@@ -45,7 +45,6 @@
             color: #001323;
         }
         /* Additional style rules go here! */
-        
         .blue {
             color: #165bb6;
         }
@@ -53,10 +52,8 @@
             color: #cc0000;
         }
         .purple {
-            color: #b6165b; 
+            color: #b6165b;
         }
-        
-
     </style>
 </head>
 
@@ -76,95 +73,94 @@
     </footer>
 
     <script>
-
         var map = L.map('map', {
-            center: [-22.9068, -43.1729],
-            zoom: 8,
+            center: [-22.9568, -43.1929],
+            zoom: 12,
         });
-       
+
         var tiles = L.tileLayer('http://a{s}.acetate.geoiq.com/tiles/acetate-hillshading/{z}/{x}/{y}.png', {
             attribution: '&copy;2012 Esri & Stamen, Data from OSM and Natural Earth',
             subdomains: '0123',
             minZoom: 4,
-            maxZoom: 12
+            maxZoom: 15
         });
         map.addLayer(tiles);
-        
+
         var tourBrazil = {
-             "type": "FeatureCollection",
+            "type": "FeatureCollection",
             "features": [
-        
+
                 {
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "marker-color": "#7e7e7e",
-        "marker-size": "medium",
-        "marker-symbol": "",
-        "Name": "Cristo the Redeemer",
-        "Description": "Best Monument",
-        "Radius": 100
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
+                    "type": "FeatureCollection",
+                    "features": [
+                        {
+                            "type": "Feature",
+                            "properties": {
+                                "marker-color": "#7e7e7e",
+                                "marker-size": "medium",
+                                "marker-symbol": "",
+                                "Name": "Cristo the Redeemer",
+                                "Description": "Best Monument",
+                                "Radius": 100
+                            },
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [
           -43.211631774902344,
           -22.951280260254226
         ]
-      }
+                            }
     },
-    {
-      "type": "Feature",
-      "properties": {
-        "marker-color": "#7e7e7e",
-        "marker-size": "medium",
-        "marker-symbol": "",
-        "Name": "Sugarloaf Mtn",
-        "Description": "Best View",
-        "Radius": 100
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
+                        {
+                            "type": "Feature",
+                            "properties": {
+                                "marker-color": "#7e7e7e",
+                                "marker-size": "medium",
+                                "marker-symbol": "",
+                                "Name": "Sugarloaf Mtn",
+                                "Description": "Best View",
+                                "Radius": 100
+                            },
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [
           -43.16880226135254,
           -22.957049769147975
         ]
-      }
+                            }
     },
-    {
-      "type": "Feature",
-      "properties": {
-        "marker-color": "#7e7e7e",
-        "marker-size": "medium",
-        "marker-symbol": "",
-        "Name": "Rocinha",
-        "Description": "Largest Favela",
-        "Radius": 100
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
+                        {
+                            "type": "Feature",
+                            "properties": {
+                                "marker-color": "#7e7e7e",
+                                "marker-size": "medium",
+                                "marker-symbol": "",
+                                "Name": "Rocinha",
+                                "Description": "Largest Favela",
+                                "Radius": 100
+                            },
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [
           -43.24896812438965,
           -22.98842210396834
         ]
-      }
+                            }
     },
-    {
-      "type": "Feature",
-      "properties": {
-        "stroke": "#555555",
-        "stroke-width": 2,
-        "stroke-opacity": 1,
-        "fill": "#555555",
-        "fill-opacity": 0.5,
-        "Name": "Ipanema",
-        "Description": "Best Beach"
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
+                        {
+                            "type": "Feature",
+                            "properties": {
+                                "stroke": "#555555",
+                                "stroke-width": 2,
+                                "stroke-opacity": 1,
+                                "fill": "#555555",
+                                "fill-opacity": 0.5,
+                                "Name": "Ipanema",
+                                "Description": "Best Beach"
+                            },
+                            "geometry": {
+                                "type": "Polygon",
+                                "coordinates": [
           [
             [
               -43.213863372802734,
@@ -188,16 +184,16 @@
             ]
           ]
         ]
-      }
+                            }
     }
   ]
 },
                 {
-                "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
+                    "type": "Feature",
+                    "properties": {},
+                    "geometry": {
+                        "type": "LineString",
+                        "coordinates": [
           [
             -43.20270538330078,
             -22.98399722841694
@@ -219,62 +215,63 @@
             -22.985261493365908
           ]
         ]
-      }
+                    }
     }
   ]
-}
-            
-            
-            
-            
-             var brazilPoints = {
+        }
+
+
+
+
+        var brazilPoints = {
             color: "blue"
         };
-        
-            var brazilPoly = {
+
+        var brazilPoly = {
             color: "green"
-        }; 
-        
+        };
+
         var brazilLine = {
             color: "green"
         };
-        
-        
-        
-        
-        var brazilFeatures = L.geoJson(tourBrazil, {pointToLayer: function(feature, latlng) {
-            
-            return L.circle(latlng, feature.properties.radius);
-        },
-            
-            style: function(feature) {
-                return { dashArray: "5, 10",
-                        weight: 10
-                       }
-            },
-                                                    
-         onEachFeature:  function(feature, layer) {
-             if(feature.geometry.type == "Point") {
-                 layer.setStyle(brazilPoints);
-                 layer.bindPopup("This is a " +feature.geometry.type+ "Feature");
-             }
-             if(feature.geometry.type == "LineString") {
-                 layer.setStyle(brazilLine);
-                 layer.bindPopup("This is a " +feature.geometry.type+ "Feature");
-             }
-             if(feature.geometry.type == "Polygon"){
-                 layer.setStyle(brazilPoly);
-                 layer.bindPopup("This is a "+feature.geometry.type+ "Feature");
-           
-             }}}).addTo(map);
-                               
-        
-        // Begin writing/modifying code for Task H here
-        
 
-          
+
+
+
+        var brazilFeatures = L.geoJson(tourBrazil, {
+            pointToLayer: function (feature, latlng) {
+
+                return L.circle(latlng, feature.properties.Radius);
+            },
+
+            style: function (feature) {
+                return {
+                    dashArray: "5, 10",
+                    weight: 10
+                }
+            },
+
+            onEachFeature: function (feature, layer) {
+                if (feature.geometry.type == "Point") {
+                    layer.setStyle(brazilPoints);
+                    layer.bindPopup("This is a " + feature.geometry.type + "Feature");
+                }
+                if (feature.geometry.type == "LineString") {
+                    layer.setStyle(brazilLine);
+                    layer.bindPopup("This is a " + feature.geometry.type + "Feature");
+                }
+                if (feature.geometry.type == "Polygon") {
+                    layer.setStyle(brazilPoly);
+                    layer.bindPopup("This is a " + feature.geometry.type + "Feature");
+
+                }
+            }
+        }).addTo(map);
+
+
+         // Begin writing/modifying code for Task H here
     </script>
-    
+
 </body>
 
 </html>
