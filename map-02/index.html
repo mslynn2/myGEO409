@@ -45,7 +45,6 @@
             color: #001323;
         }
         /* Additional style rules go here! */
-        
     </style>
 </head>
 
@@ -55,7 +54,7 @@
         <h2>centered on Louisville, KY</h2>
     </header>
 
-        <div id='map'></div>
+    <div id='map'></div>
 
     <footer>
         <p>Map authored by Micah Lynn</p>
@@ -63,39 +62,36 @@
         <p>Coal powered plants producing less than 500 mw and are within 400 km of Louisville, KY
         </p>
     </footer>
-    
-        <script src="power-plants-assignment.js"></script> 
-        
-        
-      
-    <script>
 
-          var options = {
-        center: [38, -85],
-        zoom: 4
+    <script src="power-plants-assignment.js"></script>
+
+
+
+    <script>
+        var options = {
+            center: [38, -85],
+            zoom: 4
         }
-    
-    var map = L.map('map', options);
-       
-    var Stamen_TonerLite = L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
-	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-	subdomains: 'abcd',
-	minZoom: 0,
-	maxZoom: 20
-});
+
+        var map = L.map('map', options);
+
+        var Stamen_TonerLite = L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {
+            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            subdomains: 'abcd',
+            minZoom: 0,
+            maxZoom: 20
+        });
         map.addLayer(Stamen_TonerLite);
-        
-        plants.features.sort(function(a,b) {
-			return b.properties.capacity - a.properties.capacity;
-		});
-        
-        
-        var coalPlants = L.layerGroup();
-        
-        
-            L.geoJson(plants, {
-            pointToLayer : function ( feature, latlng) {
-                return L.circleMarker( latlng, {
+
+        plants.features.sort(function (a, b) {
+            return b.properties.capacity - a.properties.capacity;
+        });
+
+        var cityLou = L.latLng(38.2500, -86.7667);
+
+        var coalPlants = L.geoJson(plants, {
+            pointToLayer: function (feature, latlng) {
+                return L.circleMarker(latlng, {
                     radius: getRadius(feature.properties.source["Coal"]),
                     color: "black",
                     weight: 1.25,
@@ -103,59 +99,48 @@
                     opacity: 7.5
                 });
             },
-                
-                
-         }).addTo(coalPlants);
-        coalPlants.addTo(map);
-        
-        
-         var cityLou = L.latlng(38.2500, -86.7667);
-        
-         filter: function(feature, layer) {
+
+            filter: function (feature, layer) {
                 var coalCoords = L.latLng(feature.geometry.coordinates[1], feature.geometry.coordinates[0]);
-                feature.properties.distanceFrom(cityLou) = (plantLatLng.distanceTo(cityLou)) / 1000;
-                if((feature.properties.distanceFrom(cityLou) < 400) &&      (feature.properties.source["Coal"] &&
-                   feature.properties.source["Coal"] < 500)) {
-                    return feature;   
+                feature.properties.distanceFromLou = coalCoords.distanceTo(cityLou) / 1000;
+                if ((feature.properties.distanceFromLou < 400) && (feature.properties.source["Coal"] &&
+                    feature.properties.source["Coal"] < 500)) {
+                    return feature;
                 }
             },
-                
-                onEachFeature: function(feature,layer) {
+
+            onEachFeature: function (feature, layer) {
                 var props = feature.properties;
-                var content = "<b>"+props.plant_name+"</b><br>"+
-                    props.capacity.toLocaleString()+" MW<br>";
+                var content = "<b>" + props.plant_name + "</b><br>" +
+                    props.capacity.toLocaleString() + " MW<br>";
                 var source = props.source;
-                for(var fuel in source){
-                    content+="<b>"+fuel+"</b>: "+source[fuel].toLocaleString()+" MW<br>";
+                for (var fuel in source) {
+                    content += "<b>" + fuel + "</b>: " + source[fuel].toLocaleString() + " MW<br>";
                 }
-                    content+= "This plant is " + "<b>" +props.distanceFrom(cityLou).toLocaleString() + " km" + "</b>" + " from Louisville, KY";
-                layer.bindPopup(content); 
-                
-                layer.on('mouseover', function() {
+                content += "This plant is " + "<b>" + props.distanceFromLou.toLocaleString() + " km" + "</b>" + " from Louisville, KY";
+                layer.bindPopup(content);
+
+                layer.on('mouseover', function () {
                     layer.setStyle({
                         fillColor: 'orange'
                     });
                 });
-                layer.on('mouseout', function() {
+                layer.on('mouseout', function () {
                     layer.setStyle({
                         fillColor: 'red'
                     });
                 });
             }
-            
-        }).addTo(map);
-        
-       
-         function getRadius(area) {
-            var radius = Math.sqrt(area/Math.PI);
-            return radius * 0.6;   
-        }       
-            
-            
 
-        
+
+        }).addTo(map);
+
+        function getRadius(area) {
+            var radius = Math.sqrt(area / Math.PI);
+            return radius * 0.6;
+        }
     </script>
-    
+
 </body>
 
 </html>
