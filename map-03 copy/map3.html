@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>Module 12 Lab Practice Template</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: Lato, sans-serif;
+            color: #0D0000;
+        }
+        header {
+            padding: 6px 10%;
+        }
+        h1 {
+            display: inline-block;
+            margin-right: 20px;
+            color: #001323;
+        }
+        h2 {
+            display: inline-block;
+            color: #001323;
+        }
+        #map {
+            width: 80%;
+            height: 540px;
+            margin: 10px auto;
+        }
+        footer {
+            padding: 6px 10%;
+            width: 80%;
+        }
+        p {
+            font-size: 1em;
+            color: #001323;
+        }
+        /* Additional style rules go here! */
+        
+        .popup {
+            background: green; 
+            color: green;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Hydro, Nuclear, and Wind Power Plants</h1>
+        <h2>Centered on the Geographic Center of the USA</h2>
+    </header>
+
+    <div id='map'></div>
+
+    <footer>
+        <p>Map authored by Micah Lynn</p>
+        <p>Comparison of power generation by Hydro, Nuclear, and Wind plants, respectively.</p>
+        <p>Upon clicking once, the map will display power plants within 500 km of the click event. When double clicked, 200km from the click event.  This is beneficial when you need to know the locations and mileage away this given power plants are from a specific point or city.
+        </p>
+    </footer>
+    
+    <script src="power-plants.js"></script>
+
+    <script>
+        var options = {
+            center: [39.5, -98.35],
+            zoom: 3.85
+        }
+        var map = L.map('map', options);
+        
+        var tiles = L.tileLayer('http://a{s}.acetate.geoiq.com/tiles/acetate-hillshading/{z}/{x}/{y}.png', {
+	attribution: '&copy;2012 Esri & Stamen, Data from OSM and Natural Earth',
+	subdomains: '0123',
+	minZoom: 2,
+	maxZoom: 18
+});
+        map.addLayer(tiles);
+
+        plants.features.sort(function(a,b) {
+			return b.properties.capacity_mw - a.properties.capacity_mw;})
+        
+        
+        var hydroLayer = L.geoJson(plants, {
+        pointToLayer: function(feature,latlng) {
+            return L.circleMarker(latlng);
+        },
+        filter: function(feature) {
+            if(feature.properties.fuel_source["Hydro"]) {
+                return feature;
+            }
+        },
+        style: function(feature) {
+            return {
+                color: '#7570b3',
+                fillColor: '#7570b3',
+                weight: 3,
+                stroke: 1.5,
+                fillOpacity: .8,
+                radius: getRadius(feature.properties.fuel_source["Hydro"])
+            } 
+        } 
+    }).addTo(map);
+        
+        function getRadius(val) {
+        var radius = Math.sqrt(val/Math.PI);
+        return radius * .8;   
+    }
+
+    hydroLayer.setStyle({
+        color: '#7570b3',
+        fillColor: '#7570b3'
+    });
+        
+        var nuclearLayer = L.geoJson(plants, {
+        pointToLayer: function(feature,latlng) {
+            return L.circleMarker(latlng);
+        },
+        filter: function(feature) {
+            if(feature.properties.fuel_source["Nuclear"]) {
+                return feature;
+            }
+        },
+        style: function(feature) {
+            return {
+                color: '#d95f02',
+                fillColor: '#d95f02',
+                weight: 3,
+                stroke: 1.5,
+                fillOpacity: .8,
+                radius: getRadius(feature.properties.fuel_source["Nuclear"])
+            } 
+        } 
+    }).addTo(map);
+        
+        function getRadius(val) {
+        var radius = Math.sqrt(val/Math.PI);
+        return radius * .8;   
+    }
+
+    nuclearLayer.setStyle({
+        color: '#d95f02',
+        fillColor: '#d95f02'
+    });
+        
+        var windLayer = L.geoJson(plants, {
+        pointToLayer: function(feature,latlng) {
+            return L.circleMarker(latlng);
+        },
+        filter: function(feature) {
+            if(feature.properties.fuel_source["Wind"]) {
+                return feature;
+            }
+        },
+        style: function(feature) {
+            return {
+                color: '#1b9e77',
+                fillColor: '#1b9e77',
+                weight: 2.5,
+                stroke: 1.5,
+                fillOpacity: .8,
+                radius: getRadius(feature.properties.fuel_source["Wind"])
+            } 
+        } 
+    }).addTo(map);
+        
+        function getRadius(val) {
+        var radius = Math.sqrt(val/Math.PI);
+        return radius * .8;   
+    }
+
+    windLayer.setStyle({
+        color: '#1b9e77',
+        fillColor: '#1b9e77'
+    });
+        
+        var elementLayers = {
+            "<b style='color:#7570b3'>Hydro</b>": hydroLayer,
+             "<b style='color:#d95f02'>Nuclear</b>": nuclearLayer,
+            "<b style='color:#1b9e77'>Wind</b>": windLayer
+    }
+        
+         L.control.layers(null, elementLayers, { collapsed:false }).addTo(map);
+        
+        
+        map.on('click', function(e) {
+           hydroLayer.eachLayer(function(layer) {
+            var distance = e.latlng.distanceTo(layer.getLatLng())/1000;
+            if(distance > 500) {
+                layer.setStyle({
+                    stroke: false,
+                    fill: false
+                });  
+            } else {
+               layer.setStyle({
+                    stroke: true,
+                    fill: true  
+               });  
+               layer.bindPopup(layer.feature.properties.plant_name+"<br>Hydro"+"<br>I am <b>"+distance.toLocaleString()+ "km</b><br> from the click point.");
+            } 
+        });
+    });
+        
+        map.on('click', function(e) {
+           nuclearLayer.eachLayer(function(layer) {
+            var distance = e.latlng.distanceTo(layer.getLatLng())/1000;
+            if(distance > 500) {
+                layer.setStyle({
+                    stroke: false,
+                    fill: false
+                });  
+            } else {
+               layer.setStyle({
+                    stroke: true,
+                    fill: true  
+               });  
+               layer.bindPopup(layer.feature.properties.plant_name+"<br>Nuclear<br>"+ "I am <b>"+distance.toLocaleString()+ 
+                               "km</b><br> from the click point.");
+            } 
+        });
+    });
+        
+        map.on('click', function(e) {
+           windLayer.eachLayer(function(layer) {
+            var distance = e.latlng.distanceTo(layer.getLatLng())/1000;
+            if(distance > 500) {
+                layer.setStyle({
+                    stroke: false,
+                    fill: false
+                });  
+            } else {
+               layer.setStyle({
+                    stroke: true,
+                    fill: true  
+               });  
+               layer.bindPopup(layer.feature.properties.plant_name +"<br>Wind<br>"+"I am <b>"+distance.toLocaleString()+ 
+                               "km</b><br> from the click point.");
+            } 
+        });
+    });
+        
+        
+        map.on('dblclick', function(e) {
+           hydroLayer.eachLayer(function(layer) {
+            var distance = e.latlng.distanceTo(layer.getLatLng())/1000;
+            if(distance > 200) {
+                layer.setStyle({
+                    stroke: false,
+                    fill: false
+                });  
+            } else {
+               layer.setStyle({
+                    stroke: true,
+                    fill: true  
+               });  
+                map.doubleClickZoom.disable();
+               layer.bindPopup(layer.feature.properties.plant_name+"<br>Hydro<br>"+"I am <b>"+distance.toLocaleString()+ 
+                               "km</b><br> from the click point.");
+            } 
+        });
+    });
+        
+        map.on('dblclick', function(e) {
+           nuclearLayer.eachLayer(function(layer) {
+            var distance = e.latlng.distanceTo(layer.getLatLng())/1000;
+            if(distance > 200) {
+                layer.setStyle({
+                    stroke: false,
+                    fill: false
+                });  
+            } else {
+               layer.setStyle({
+                    stroke: true,
+                    fill: true  
+               });  
+         map.doubleClickZoom.disable();
+               layer.bindPopup(layer.feature.properties.plant_name+"<br>Nuclear<br>"+"I am <b>"+distance.toLocaleString()+ 
+                               "km</b><br> from the click point.");
+            } 
+        });
+    });
+        
+        map.on('dblclick', function(e) {
+           windLayer.eachLayer(function(layer) {
+            var distance = e.latlng.distanceTo(layer.getLatLng())/1000;
+            if(distance > 200) {
+                layer.setStyle({
+                    stroke: false,
+                    fill: false
+                });  
+            } else {
+               layer.setStyle({
+                    stroke: true,
+                    fill: true  
+               });  
+                 map.doubleClickZoom.disable();
+               layer.bindPopup(layer.feature.properties.plant_name +"<br>Wind<br>"+"I am <b>"+distance.toLocaleString()+ 
+                               "km</b><br> from the click point.");
+            } 
+        });
+    });
+        
+       
+        
+        
+        
+
+        
+
+    </script>
+    
+</body>
+
+</html>      
