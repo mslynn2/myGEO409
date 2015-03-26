@@ -86,7 +86,8 @@
          var map = L.map('map', options);
         
         $.getJSON("ky_counties_housing.json", function(data) {
-            console.log(data);
+            L.geoJson(data).addTo(map);
+//            console.log(data);
             });
 
     </script>
