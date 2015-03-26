@@ -84,7 +84,6 @@
 	maxZoom: 18
 });
         map.addLayer(tiles);
-
         plants.features.sort(function(a,b) {
 			return b.properties.capacity_mw - a.properties.capacity_mw;})
         
@@ -114,7 +113,6 @@
         var radius = Math.sqrt(val/Math.PI);
         return radius * .8;   
     }
-
     hydroLayer.setStyle({
         color: '#7570b3',
         fillColor: '#7570b3'
@@ -145,7 +143,6 @@
         var radius = Math.sqrt(val/Math.PI);
         return radius * .8;   
     }
-
     nuclearLayer.setStyle({
         color: '#d95f02',
         fillColor: '#d95f02'
@@ -176,7 +173,6 @@
         var radius = Math.sqrt(val/Math.PI);
         return radius * .8;   
     }
-
     windLayer.setStyle({
         color: '#1b9e77',
         fillColor: '#1b9e77'
@@ -312,11 +308,9 @@
         
         
         
-
         
-
     </script>
     
 </body>
 
-</html>
+</html>  
