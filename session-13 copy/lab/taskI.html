@@ -64,7 +64,7 @@
 
     <footer>
         <p>Map authored by Micah Lynn</p>
-        <p>Additional information about the data and map goes here.</p>
+        <p>Housing vacancy in KY.</p>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis urna magna, maximus nec laoreet sit amet, dictum ultricies nibh. Ut id auctor lacus. Nam a dolor et justo luctus luctus. Duis a elit eget risus dictum vehicula id eu elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed sed enim nisl. Vestibulum commodo imperdiet lacus, sed facilisis erat placerat sit amet. Nulla consequat malesuada neque eget aliquet. Integer non convallis nisl, gravida ultrices ex. Fusce nec vestibulum elit. Sed elementum lectus ipsum, vulputate elementum ex laoreet a. Aenean eu ex varius, varius felis vitae, efficitur nulla. Quisque pretium laoreet ante, in sodales dui vehicula at. Mauris eu sem sapien.
         </p>
     </footer>
@@ -73,7 +73,8 @@
         
         // WRITE YOUR CODE JAVASCRIPT CODE HERE
         
-         jQuery("h1").html("Housing Ownership in Kentucky");
+         jQuery("h1").html("Vacant Housing Units in Kentucky");
+         $("h2").html("According to American Fact Finder, 2010");
         
         var options = {
         center: [37.8, -85.8],
@@ -87,7 +88,7 @@
          var map = L.map('map', options);
         
         var dataLayer,
-            attribute = "RENTER",
+            attribute = "VACANT",
             norm = "TOTAL";
         
         $.getJSON("ky_counties_housing.json", function(data) {
@@ -112,7 +113,10 @@
             layer.setStyle({
             fillColor: getColor(layer.feature.properties[attribute]/layer.feature.properties[norm], breaks)
         });
-    })
+                layer.bindPopup("<b>"+layer.feature.properties["NAME"]+"</b><br>VACANT: "+(layer.feature.properties[attribute]/layer.feature.properties[norm])*100+"%");
+                
+    }),
+    drawLegend(breaks);
 
     }
 
@@ -143,6 +147,7 @@
             return '#045a8d'
         }
     }
+        
         
         function drawLegend(breaks) {
             
