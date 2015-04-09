@@ -8,6 +8,8 @@
 
     <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
     <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.0/papaparse.min.js"></script>
+    <script src="simple_statistics.js"></script>
 
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
     <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
@@ -24,14 +26,22 @@
             padding: 6px 10%;
         }
         h1 {
+            position: absolute;
+            z-index: 100;
+            top: 10px;
+            left: 60px;
             padding: 8px 15px;
-            margin: 0; 
+            margin: 0;
+            color: whitesmoke;
+            font-size: 1.5em;
+            background: rgba(25,25,25,0.8);
+            border-radius: 5px; 
         }
         #map {
             position: absolute;
             width: 100%;
-            top: 0;
-            bottom: 0;
+            top:  0;
+            bottom:  0;
         }
         footer {
             padding: 6px 10%;
@@ -41,12 +51,63 @@
             font-size: 1em;
             color: #001323;
         }   
+         .legend {
+            padding: 6px 8px;
+            font-size: 1em;
+            background: rgba(75,75,75,0.8);
+            color: whitesmoke;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-radius: 5px;
+            width: 160px;
+        }
+        .legend h3 {
+            font-size: 1.1em;
+            font-weight: bold;
+            line-height: 1em;
+            color: whitesmoke;
+            margin: 0;
+        }
+        .legend li {
+            list-style-type: none;
+            height: 22px;
+        }
+        .legend span {
+            width: 30px;
+            height: 20px;
+            float: left;
+            margin-right: 10px;
+        }
+        #ui-controls {
+            width: 176px;   
+            padding: 8px 15px 8px 15px;
+            background: rgba(75,75,75,0.8);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-radius: 5px; 
+            color: whitesmoke;
+        }
+        .year-slider {
+            width: 100%;
+        }
+        #ui-controls .min {
+            float: left;   
+        }
+        #ui-controls .max {
+            float: right;
+        }
+        label {
+        font-size: 1.1em;
+        font-weight: bold;
+        }
     </style>
 </head>
 
 <body>
     <h1>Map Title Goes Here</h1>
     <div id='map'></div>
+    <div id="ui-controls">
+        <input type="range" min="2001", max="2013", 
+                value="2001", step="1" class="year-slider"></input>
+    </div>
     
     <script>
         
@@ -60,27 +121,186 @@
         }
         var map = L.map('map', options);
         
-        // load map tiles and add to map
-                
-        // declare global variables
+        var tiles = L.tileLayer('http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.{ext}', {
+	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+	subdomains: 'abcd',
+	minZoom: 0,
+	maxZoom: 20,
+	ext: 'png'
+});
+        map.addLayer(tiles);
+        
+        $.getJSON("us-states.json", function(states) {
 
-        // AJAX requests to load data files
- 
-        // function to process/bind data
+        Papa.parse('states-unemployment.csv', {
+            download: true,
+            header: true,
+            complete: function(data) {
 
+                processData(states, data);
+
+            }
+        });
+
+    })
+        .fail(function() {
+            //the data file fails to load
+            console.log("Data failed to load.");
+        });
+        
+        function processData(states, data) {
+            for (var state in states.features) {
+
+        var props = states.features[state].properties;
+
+//        console.log(props.StateFP);
+
+        for(var d in data.data) {
+            if(props.STATEFP == data.data[d].STATE_FIP) {
+              states.features[state].properties = data.data[d]; 
+              break;
+
+//            console.log(data.data[d].STATE_FIP);
+        }
+    }}
+             drawMap(states)
+            
+        }
+        
         // function to draw the map
+        function drawMap(states) {
+          
+            dataLayer = L.geoJson(states, {
+              style: function(feature) {
+                  return {
+                      color: '#dddddd',
+                      weight: 2,
+                      fillOpacity: 1,
+                      fillColor: '#1f78b4'
+                  };
+              }
+            }).addTo(map);
+            
+            drawLegend();
+            updateMap();
+            createSliderUI();
+        
+        }
         
         // function to update the map
+        function updateMap() {
+            
+            var breaks = getClassBreaks();
+            
+            dataLayer.eachLayer(function(layer) {
+                
+                layer.setStyle({                                        
+                    fillColor: getColor(Number(layer.feature.properties[attribute]), breaks)
+                });
         
-        // function get the class breaks   
+            })
+            
+            updateLegend(breaks);
+        }
+        
+//         function get the class breaks 
+        function getClassBreaks() {
+             var values = [];
+             
+             dataLayer.eachLayer(function(layer) {
+//                 console.log(layer.feature.properties[attribute]);
+                 var value = layer.feature.properties[attribute];
+                 values.push(Number(value)); // push the normalized value for each layer into the Array
+             });
+            
+             var breaks = ss.quantile(values, [0, 0.2, 0.4, 0.6, 0.8, 1]);
+                return breaks; // return Array of class breaks
+            
+         }
         
         // function to get the color value
+            function getColor (d, breaks) {
                 
+                if(d <= breaks[0]) {
+                    return '#c7e9b4';
+                } else if(d <= breaks[1]) {
+                    return '#7fcdbb';
+                } else if(d <= breaks[2]) {
+                    return '#41b6c4';
+                } else if(d <= breaks[3]) {
+                    return '#1d91c0'
+                } else if(d <= breaks[4]) {
+                    return '#225ea8'
+                } else if(d <= breaks[5]) {
+                    return '#0c2c84'
+                }
+                
+                
+            }
+        
         // function to draw the legend
+        function drawLegend() {
+            
+            var legend = L.control({position: 'topleft'});
+            
+            legend.onAdd = function(map) {
+                
+                var div = L.DomUtil.create('div', 'legend');
+               
+                return div;
+            };
+           
+            legend.addTo(map);
+        }
         
         // function to update the legend
-
+        function updateLegend(breaks) {
+            
+//            console.log(breaks);
+             
+            var legend = $('.legend').html("<h3>" + [attribute] + "</h3><ul>");
+            
+            for (var i = 0; i < breaks.length-1; i++) {
+                
+                var color = getColor(breaks[i], breaks);
+                
+//                    console.log(breaks[i + 1]);
+                
+                legend.append('<li><span style="background:' + color + '"></span> ' +
+                            (breaks[i]).toLocaleString() + ' &mdash; ' +
+                              (breaks[i + 1]).toLocaleString() + "%" + '</li>');
+            }
+            
+            legend.append("</ul>");
+        }
+        
         // function to create the range slider
+        function createSliderUI(){
+            
+            var sliderControl = L.control({ position: 'bottomleft'} );
+            sliderControl.onAdd = function(map) {
+                    // select an existing DOM element with an id of "ui-controls"
+                    var slider = L.DomUtil.get("ui-controls");
+                    L.DomEvent.addListener(slider, 'mousedown', function(e) { 
+                    L.DomEvent.stopPropagation(e); 
+            });
+            return slider;
+        }
+        sliderControl.addTo(map);
+        
+        }
+        
+        $(".year-slider")
+            .on('input change', function() {
+                attribute = $(this).val();
+            
+                updateMap();
+            
+        });
+
+
+        
+        
 
     </script>
     
